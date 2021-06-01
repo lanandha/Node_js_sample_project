@@ -6,6 +6,7 @@ GEREKLİ PAKETLER YÜKLENİYOR...
 var http = require('http');
 var express = require('express');
 const scanner = require('node-wifi-scanner');
+var wifi = require('node-wifi');
 
 var app = express();
 
@@ -16,6 +17,7 @@ app.use(express.static(__dirname + '/app/public')); // KULLANICILAR TARAFINDAN E
 
 require('./app/routes')(app); // ROUTE DOSYASI ÇAĞIRILDI
 
+//https://www.npmjs.com/package/node-wifi-scanner
 app.get('/get',(req,res)=>{
 scanner.scan((err, networks) => {
 	if (err) {
@@ -25,11 +27,23 @@ scanner.scan((err, networks) => {
 	console.log(networks);
 	res.send({" wifi list successful":networks});
   });
- 
 });
 
+//https://www.npmjs.com/package/node-wifi
 
-
+app.get('/list',(req,res)=>{
+	wifi.init({
+		iface: null // network interface, choose a random wifi interface if set to null
+	  });
+	wifi.scan((error, networks) => {
+		if (error) {
+		  console.log(error);
+		} else {
+		  console.log(networks);
+		res.send({" wifi list successful":networks});
+		}
+	  });
+	});
 
 /*
 
